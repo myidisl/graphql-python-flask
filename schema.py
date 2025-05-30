@@ -2,6 +2,7 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from models import UserModel
 from db import SessionLocal
+from auth import generate_token,get_current_user
 
 # Tipe data User
 class User(SQLAlchemyObjectType):
@@ -20,11 +21,19 @@ class Query(graphene.ObjectType):
     user = graphene.Field(User, id=graphene.Int(required=True))
 
     def resolve_user(root, info, id):
+        current_user =  get_current_user()
+        print(current_user)
+        if not current_user:
+            raise Exception("Unauthorized!")
         db = SessionLocal()
         return db.query(UserModel).filter(UserModel.id == id).first()
         #return next((user for user in mock_users if user["id"] == id), None)
 
     def resolve_users(root, info):
+        current_user = get_current_user()
+        print(current_user)
+        if not current_user:
+            raise Exception("Unauthorized!")
         db = SessionLocal()
         return db.query(UserModel).all()
         #return mock_users
@@ -47,8 +56,23 @@ class CreateUser(graphene.Mutation):
         #mock_users.append(new_user)
         #return CreateUser(user=new_user)
 
+class LoginUser(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+
+    token = graphene.String()
+
+    def mutate(self, info, email):
+        db = SessionLocal()
+        user =  db.query(UserModel).filter(UserModel.email == email).first()
+        if not user:
+            raise Exception("User not Found!")
+        token = generate_token(user)
+        return LoginUser(token=token)
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
+    login_user = LoginUser.Field()
 
 # Schema lengkap
 schema = graphene.Schema(query=Query, mutation=Mutation)

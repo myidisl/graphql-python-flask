@@ -16,3 +16,13 @@ python app.py
 - Menggunakan SQLAlchemy untuk persistensi data.
 - Struktur data: file `data.db`
 - Menyediakan query dan mutation: createUser, users, user(id)
+
+## 🔐 Auth (JWT)
+
+### Mutation: Login
+```graphql
+mutation {
+  loginUser(email: "rina@mail.com") {
+    token
+  }
+}

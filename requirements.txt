@@ -2,6 +2,7 @@ aniso8601==7.0.0
 blinker==1.9.0
 click==8.1.8
 Flask==3.1.1
+flask-cors==6.0.0
 Flask-GraphQL==2.0.1
 graphene==2.1.9
 graphene-sqlalchemy==2.3.0
@@ -13,6 +14,7 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.2
 promise==2.3
+PyJWT==2.9.0
 python-dateutil==2.9.0.post0
 Rx==1.6.3
 singledispatch==3.7.0
