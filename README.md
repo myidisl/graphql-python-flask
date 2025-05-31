@@ -26,3 +26,24 @@ mutation {
     token
   }
 }
+
+## 🔐 Autentikasi: Access Token & Refresh Token
+
+### ✨ Login
+```graphql
+mutation {
+  loginUser(email: "rina@mail.com") {
+    token
+    refreshToken
+  }
+}
+
+## 📦 Migrasi Skema Database
+
+Untuk menambahkan kolom `refresh_token`:
+
+1. Buat revisi migrasi:
+   ```bash
+   alembic revision --autogenerate -m "Tambah kolom refresh_token"
+
+alembic upgrade head

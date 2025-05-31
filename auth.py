@@ -24,3 +24,13 @@ def get_current_user():
         return db.query(UserModel).filter(UserModel.id == user_id).first()
     except Exception as e:
         return None
+
+def generate_refresh_token(user):
+    payload = {
+        "sub":user.id,
+        "exp":datetime.datetime.utcnow()+datetime.timedelta(days=7)
+    }
+    return jwt.encode(payload, SECRET_KEY,algorithm="HS256")
+
+def decode_refresh_token(refresh_token):
+    return jwt.decode(refresh_token,SECRET_KEY,algorithms=["HS256"])
