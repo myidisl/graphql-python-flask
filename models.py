@@ -9,3 +9,4 @@ class UserModel(Base):
     name = Column(String)
     email = Column(String, unique=True, index=True)
     refresh_token = Column(String, nullable=True)
+    role = Column(String,default='user')
