@@ -3,6 +3,8 @@ import datetime
 from flask import request
 from models import UserModel
 from db import SessionLocal
+from graphql import GraphQLError
+from functools import wraps
 
 SECRET_KEY = "B4l0nku@da5!"
 
@@ -34,3 +36,15 @@ def generate_refresh_token(user):
 
 def decode_refresh_token(refresh_token):
     return jwt.decode(refresh_token,SECRET_KEY,algorithms=["HS256"])
+
+def require_role(required_role):
+    """decorator untuk RBAC pada GraphQL"""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(root,info,*args,**kwargs):
+            user = info.context.get("user")
+            if not user or user.role != required_role:
+                raise GraphQLError("Unauthorized:You don't have enough privilege to access!")
+            return func(root,info,*args,**kwargs)
+        return wrapper
+    return decorator
