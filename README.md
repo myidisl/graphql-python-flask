@@ -47,3 +47,25 @@ Untuk menambahkan kolom `refresh_token`:
    alembic revision --autogenerate -m "Tambah kolom refresh_token"
 
 alembic upgrade head
+
+# Tahap 5 – Role-Based Access Control (RBAC)
+
+## Tujuan
+Menerapkan RBAC pada GraphQL API dengan role-based decorator.
+
+## Perubahan:
+- Tambah kolom `role` di model `User`
+- Tambah decorator `require_role`
+- Proteksi query `secretData`
+- Middleware JWT parsing → inject `user` ke `context`
+
+## Testing:
+- Login sebagai admin → akses berhasil
+- Login sebagai user biasa → akses ditolak
+
+## Commit history:
+- `feat(models): add role column to User model with default value 'user'`
+- `chore(migration): add alembic revision for adding role column`
+- `feat(auth): implement require_role decorator for RBAC`
+- `feat(schema): protect secretData query using RBAC`
+- `feat(api): inject authenticated user into context for RBAC`

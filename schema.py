@@ -19,6 +19,7 @@ class User(SQLAlchemyObjectType):
 class Query(graphene.ObjectType):
     users = graphene.List(User)
     user = graphene.Field(User, id=graphene.Int(required=True))
+    admin_users = graphene.List(User)
 
     @require_role("admin")
     def resolve_admin_users(root,info):
@@ -27,7 +28,7 @@ class Query(graphene.ObjectType):
         if not current_user:
             raise Exception("Unauthorized!")
         db = SessionLocal()
-        return db.query(UserModel).filter(UserModel.role == "admin")
+        return db.query(UserModel).filter(UserModel.role == "admin").all()
 
     def resolve_user(root, info, id):
         current_user =  get_current_user()

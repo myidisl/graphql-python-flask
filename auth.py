@@ -42,7 +42,8 @@ def require_role(required_role):
     def decorator(func):
         @wraps(func)
         def wrapper(root,info,*args,**kwargs):
-            user = info.context.get("user")
+            user = get_current_user()
+            print(user.role)
             if not user or user.role != required_role:
                 raise GraphQLError("Unauthorized:You don't have enough privilege to access!")
             return func(root,info,*args,**kwargs)
