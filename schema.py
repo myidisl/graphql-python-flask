@@ -2,7 +2,7 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from models import UserModel
 from db import SessionLocal
-from auth import generate_token,get_current_user,generate_refresh_token,decode_refresh_token
+from auth import generate_token,get_current_user,generate_refresh_token,decode_refresh_token,require_role
 
 # Tipe data User
 class User(SQLAlchemyObjectType):
@@ -20,6 +20,15 @@ class Query(graphene.ObjectType):
     users = graphene.List(User)
     user = graphene.Field(User, id=graphene.Int(required=True))
 
+    @require_role("admin")
+    def resolve_admin_users(root,info):
+        current_user = get_current_user()
+        print(current_user)
+        if not current_user:
+            raise Exception("Unauthorized!")
+        db = SessionLocal()
+        return db.query(UserModel).filter(UserModel.role == "admin")
+
     def resolve_user(root, info, id):
         current_user =  get_current_user()
         print(current_user)
@@ -32,8 +41,8 @@ class Query(graphene.ObjectType):
     def resolve_users(root, info):
         current_user = get_current_user()
         print(current_user)
-     #   if not current_user:
-     #       raise Exception("Unauthorized!")
+        if not current_user:
+            raise Exception("Unauthorized!")
         db = SessionLocal()
         return db.query(UserModel).all()
         #return mock_users
